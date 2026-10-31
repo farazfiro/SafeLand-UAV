@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# ML / experiment outputs
+runs/
+mlruns/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+
+# Data
+data/raw/
+data/generated/
+datasets/
+
+# Simulation / logs
+logs/
+*.ulg
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary
+tmp/
+.cache/
