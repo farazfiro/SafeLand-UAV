@@ -1,4 +1,9 @@
 # SafeLand-UAV
+
+<p align="center">
+  <img src="assets/safeland-cover.png" alt="SafeLand-UAV Cover" width="1000"/>
+</p>
+
 ### Uncertainty-Aware Visual Perception for Autonomous UAV Landing
 
 > **Status:** Work in Progress 🚧  
