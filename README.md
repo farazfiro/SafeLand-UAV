@@ -7,99 +7,135 @@
 ### Uncertainty-Aware Visual Perception for Autonomous UAV Landing
 
 > **Status:** Work in Progress 🚧  
-> Simulation-first research project. No physical UAV hardware is required.
+> Currently working on the visual landing simulation.
 
-SafeLand-UAV is a simulation-based autonomous landing system for UAVs that combines
-computer vision, uncertainty estimation, and flight-control integration. The project
-investigates whether **predictive uncertainty can reduce unsafe landing decisions under
-visual distribution shifts** such as low illumination, image noise, blur, occlusion,
-and environmental disturbances.
+SafeLand-UAV is a personal research project on autonomous UAV landing using visual perception and predictive uncertainty.
 
-## Why this project?
+The main idea is simple: a landing system should not only detect where it can land, but should also be able to recognize when its visual prediction is not reliable enough to make a safe landing decision.
 
-Modern autonomous systems should not only make predictions — they should also estimate
-**when those predictions are unreliable**. SafeLand-UAV explores this problem in the
-context of visual autonomous landing.
+The project is being developed completely in simulation first, using PX4 and Gazebo.
 
-The long-term goal is an end-to-end pipeline:
+## Research Question
+
+**Can predictive uncertainty help reduce unsafe autonomous landing decisions when the visual conditions are different from those seen during development or training?**
+
+Examples include poor lighting, blur, noise, partial occlusion, and changes in the appearance or position of the landing target.
+
+## Project Idea
+
+The final system is planned around the following pipeline:
 
 ```text
 Simulated UAV + RGB Camera
           ↓
-Visual Landing-Target Detection
+Landing Target Detection
           ↓
-Predictive Uncertainty Estimation
+Uncertainty Estimation
           ↓
-Landing Safety / Decision Logic
+Safe / Unsafe Landing Decision
           ↓
-PX4 Flight Controller
+PX4 Flight Control
           ↓
 Autonomous Landing
 ```
 
-## Research Question
+The project will be built step by step. I first want to establish a reliable simulation and perception pipeline before introducing the learning-based parts.
 
-**Can predictive uncertainty be used to reduce unsafe autonomous landing decisions
-under visual distribution shifts?**
+## Current Progress
 
-## Planned System Architecture
+The basic UAV simulation is now running successfully.
 
-- **Simulation:** PX4 SITL + Gazebo
-- **Perception:** PyTorch-based visual target detector
-- **Computer Vision:** OpenCV
-- **Uncertainty:** Deep Ensembles and/or Monte-Carlo Dropout
-- **Robotics integration:** ROS 2 (planned after the initial simulator baseline)
-- **Evaluation:** automated scenario generation and statistical benchmarking
-- **Development:** Python, Git/GitHub
+So far, I have set up:
 
-## Planned Evaluation Scenarios
+- PX4 SITL
+- Gazebo
+- x500 quadrotor simulation
+- QGroundControl connection through MAVLink
+- simulated IMU, GPS, magnetometer, and barometer data
+- PX4 state estimation and preflight checks
 
-The perception and landing system will be evaluated under controlled perturbations:
+The first complete flight test has also been completed successfully:
 
-- varying illumination
+```text
+Preflight Check
+      ↓
+Arm
+      ↓
+Takeoff
+      ↓
+Flight
+      ↓
+Landing
+      ↓
+Automatic Disarm
+```
+
+This gives me a working baseline before adding the camera and landing-target detection.
+
+## Tools
+
+Currently used:
+
+- PX4 SITL
+- Gazebo
+- QGroundControl
+- MAVLink
+- Python
+- Git/GitHub
+
+Planned for the next stages:
+
+- OpenCV
+- PyTorch
+- ROS 2
+- NumPy / pandas
+- Matplotlib
+
+For uncertainty estimation, I plan to experiment with methods such as Monte-Carlo Dropout and Deep Ensembles.
+
+## Evaluation
+
+Once the perception and landing pipeline is working, I plan to test it under different conditions, including:
+
+- different illumination levels
 - image noise and blur
-- partial target occlusion
-- camera pose variation
+- partial occlusion of the landing target
+- different camera poses
 - wind disturbances
-- unseen landing configurations
+- landing configurations not seen during training
 
-Primary metrics will include:
-
-- target-detection accuracy
-- landing-position error
-- landing success rate
-- unsafe landing rate
-- uncertainty calibration
-- inference/runtime performance
+The main metrics will include detection accuracy, landing error, landing success rate, unsafe landing rate, uncertainty calibration, and runtime.
 
 ## Baselines
 
-The planned comparison includes:
+The current plan is to compare:
 
-1. Classical vision baseline
+1. Classical computer-vision approach
 2. Neural visual detector
-3. Neural detector + predictive uncertainty
-4. Uncertainty-aware landing decision logic
+3. Neural detector with uncertainty estimation
+4. Uncertainty-aware landing decision system
+
+This should make it possible to measure whether adding uncertainty estimation actually improves landing safety.
 
 ## Roadmap
 
-- [ ] **Phase 0 — Project & environment setup**
-- [ ] **Phase 1 — PX4/Gazebo UAV simulation baseline**
-- [ ] **Phase 2 — RGB camera and landing-target dataset generation**
+- [x] **Phase 0 — Project and environment setup**
+- [x] **Phase 1 — PX4/Gazebo UAV simulation baseline**
+- [ ] **Phase 2 — RGB camera and landing-target dataset generation** ← Current
 - [ ] **Phase 3 — Classical computer-vision baseline**
 - [ ] **Phase 4 — PyTorch visual detector**
 - [ ] **Phase 5 — Uncertainty estimation**
 - [ ] **Phase 6 — Autonomous landing decision/control integration**
-- [ ] **Phase 7 — Robustness benchmark and ablation study**
-- [ ] **Phase 8 — Documentation, demo video, and technical report**
+- [ ] **Phase 7 — Robustness tests and ablation study**
+- [ ] **Phase 8 — Final documentation, demo, and technical report**
 
 ## Repository Structure
 
 ```text
 SafeLand-UAV/
-├── assets/                 # README figures and demo media
-├── configs/                # experiment and simulation configuration
-├── docs/                   # architecture and technical notes
+├── assets/                 # figures and demo media
+├── configs/                # simulation and experiment configurations
+├── docs/                   # notes and documentation
 ├── src/
 │   └── safeland/
 │       └── __init__.py
@@ -109,20 +145,25 @@ SafeLand-UAV/
 └── ROADMAP.md
 ```
 
-## Current Development Target
+## What I'm Working on Now
 
-The first milestone is intentionally small:
+The next step is to add a downward-facing RGB camera to the simulated UAV and create a landing target in Gazebo.
 
-> **Run a simulated UAV in PX4/Gazebo and establish a reproducible baseline before
-> introducing machine learning.**
+The immediate goal is:
 
-This keeps the project simulation-first and ensures that later ML results can be
-compared against a stable robotics baseline.
+```text
+x500 UAV
+   ↓
+Downward-Facing Camera
+   ↓
+Landing Target
+   ↓
+RGB Images
+```
 
-## Reproducibility
+Once this is working reliably, I can start with a simple computer-vision baseline before moving to the neural detector and uncertainty estimation.
 
-The project will be developed so that simulation scenarios, model configurations,
-and evaluation runs can be reproduced from version-controlled configuration files.
+PX4 is kept separately as an external dependency. This repository contains the SafeLand-specific perception, decision-making, evaluation, and integration code.
 
 ## Author
 
